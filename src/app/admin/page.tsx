@@ -27,6 +27,11 @@ export default function AdminPage() {
   const [updateProductId, setUpdateProductId] = useState('');
   const [updatePrice, setUpdatePrice] = useState('');
 
+  // 🔍 Filter States
+  const [searchName, setSearchName] = useState('');
+  const [searchCategory, setSearchCategory] = useState('');
+  const [searchId, setSearchId] = useState('');
+
   useEffect(() => {
     if (!user || user.role !== 'super_admin') {
       router.push('/');
@@ -112,6 +117,15 @@ export default function AdminPage() {
     return <div>Access denied</div>;
   }
 
+  // 🔎 Filtered Products
+  const filteredProducts = products.filter((product) => {
+    return (
+      product.name.toLowerCase().includes(searchName.toLowerCase()) &&
+      product.category.toLowerCase().includes(searchCategory.toLowerCase()) &&
+      product._id.toLowerCase().includes(searchId.toLowerCase())
+    );
+  });
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -128,10 +142,11 @@ export default function AdminPage() {
                   type="text"
                   value={newProduct.name}
                   onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
                   required
                 />
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700">Price</label>
                 <input
@@ -139,43 +154,47 @@ export default function AdminPage() {
                   step="0.01"
                   value={newProduct.price}
                   onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
                   required
                 />
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700">Description</label>
                 <textarea
                   value={newProduct.description}
                   onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                   rows={3}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
                   required
                 />
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700">Category</label>
                 <input
                   type="text"
                   value={newProduct.category}
                   onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
                   required
                 />
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700">Image URL</label>
                 <input
                   type="url"
                   value={newProduct.image}
                   onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
                   required
                 />
               </div>
+
               <button
                 type="submit"
-                className="w-full bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                className="w-full bg-primary-600 text-white py-2 px-4 rounded-md"
               >
                 Add Product
               </button>
@@ -192,10 +211,11 @@ export default function AdminPage() {
                   type="text"
                   value={updateProductId}
                   onChange={(e) => setUpdateProductId(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  className="mt-1 block w-full px-3 py-2 border rounded-md"
                   required
                 />
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700">New Price</label>
                 <input
@@ -203,13 +223,14 @@ export default function AdminPage() {
                   step="0.01"
                   value={updatePrice}
                   onChange={(e) => setUpdatePrice(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  className="mt-1 block w-full px-3 py-2 border rounded-md"
                   required
                 />
               </div>
+
               <button
                 type="submit"
-                className="w-full bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                className="w-full bg-primary-600 text-white py-2 px-4 rounded-md"
               >
                 Update Price
               </button>
@@ -220,29 +241,60 @@ export default function AdminPage() {
         {/* Products List */}
         <div className="mt-8 bg-white p-6 rounded-lg shadow">
           <h2 className="text-xl font-semibold mb-4">Products</h2>
+
+          {/* Filter Inputs */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <input
+              type="text"
+              placeholder="Search by Name"
+              value={searchName}
+              onChange={(e) => setSearchName(e.target.value)}
+              className="px-3 py-2 border rounded-md"
+            />
+
+            <input
+              type="text"
+              placeholder="Search by Category"
+              value={searchCategory}
+              onChange={(e) => setSearchCategory(e.target.value)}
+              className="px-3 py-2 border rounded-md"
+            />
+
+            <input
+              type="text"
+              placeholder="Search by Product ID"
+              value={searchId}
+              onChange={(e) => setSearchId(e.target.value)}
+              className="px-3 py-2 border rounded-md"
+            />
+          </div>
+
+          {/* Products Table */}
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium">ID</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium">Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium">Price</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium">Category</th>
                 </tr>
               </thead>
+
               <tbody className="bg-white divide-y divide-gray-200">
-                {products.map((product) => (
+                {filteredProducts.map((product) => (
                   <tr key={product._id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">{product._id}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{product.name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${product.price}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{product.category}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-mono">{product._id}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">{product.name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">${product.price}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">{product.category}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         </div>
+
       </div>
     </div>
   );
