@@ -32,7 +32,7 @@ export default function ShopPage() {
     });
 
   const handleAddToCart = (product: Product) => {
-    addToCart(product);
+    addToCart({ product, quantity: 1 });
     setIsCartOpen(true);
   };
 

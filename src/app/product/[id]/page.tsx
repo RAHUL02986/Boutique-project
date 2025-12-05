@@ -23,6 +23,7 @@ export default function ProductPage() {
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [quantity, setQuantity] = useState(1);
+  const [error, setError] = useState<string>('');
 
   if (!product) {
     return (
@@ -38,12 +39,46 @@ export default function ProductPage() {
   }
 
   const images = product.images || [product.image];
+  const hasColors = product.colors && product.colors.length > 0;
+  const hasSizes = product.sizes && product.sizes.length > 0;
+
+  const validateSelection = (): boolean => {
+    if (hasColors && !selectedColor) {
+      setError('Please select a color');
+      return false;
+    }
+    if (hasSizes && !selectedSize) {
+      setError('Please select a size');
+      return false;
+    }
+    setError('');
+    return true;
+  };
 
   const handleAddToCart = () => {
-    for (let i = 0; i < quantity; i++) {
-      addToCart(product);
-    }
+    if (!validateSelection()) return;
+    
+    addToCart({
+      product,
+      quantity,
+      selectedSize: selectedSize || undefined,
+      selectedColor: selectedColor || undefined,
+    });
     setIsCartOpen(true);
+  };
+
+  const handleBuyNow = (e: React.MouseEvent) => {
+    if (!validateSelection()) {
+      e.preventDefault();
+      return;
+    }
+    
+    addToCart({
+      product,
+      quantity,
+      selectedSize: selectedSize || undefined,
+      selectedColor: selectedColor || undefined,
+    });
   };
 
   const relatedProducts = products
@@ -107,14 +142,22 @@ export default function ProductPage() {
             <p className="text-3xl font-bold text-primary-600">${product.price.toFixed(2)}</p>
             <p className="text-secondary-600 leading-relaxed">{product.description}</p>
 
-            {product.colors && product.colors.length > 0 && (
+            {error && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+                {error}
+              </div>
+            )}
+
+            {hasColors && (
               <div>
-                <h3 className="text-sm font-medium text-secondary-800 mb-3">Color</h3>
+                <h3 className="text-sm font-medium text-secondary-800 mb-3">
+                  Color <span className="text-red-500">*</span>
+                </h3>
                 <div className="flex flex-wrap gap-2">
-                  {product.colors.map((color) => (
+                  {product.colors!.map((color) => (
                     <button
                       key={color}
-                      onClick={() => setSelectedColor(color)}
+                      onClick={() => { setSelectedColor(color); setError(''); }}
                       className={`px-4 py-2 rounded-lg border text-sm transition-colors ${
                         selectedColor === color
                           ? 'border-primary-600 bg-primary-50 text-primary-700'
@@ -128,14 +171,16 @@ export default function ProductPage() {
               </div>
             )}
 
-            {product.sizes && product.sizes.length > 0 && (
+            {hasSizes && (
               <div>
-                <h3 className="text-sm font-medium text-secondary-800 mb-3">Size</h3>
+                <h3 className="text-sm font-medium text-secondary-800 mb-3">
+                  Size <span className="text-red-500">*</span>
+                </h3>
                 <div className="flex flex-wrap gap-2">
-                  {product.sizes.map((size) => (
+                  {product.sizes!.map((size) => (
                     <button
                       key={size}
-                      onClick={() => setSelectedSize(size)}
+                      onClick={() => { setSelectedSize(size); setError(''); }}
                       className={`w-12 h-12 rounded-lg border text-sm font-medium transition-colors ${
                         selectedSize === size
                           ? 'border-primary-600 bg-primary-600 text-white'
@@ -180,7 +225,7 @@ export default function ProductPage() {
               </button>
               <Link
                 href="/checkout"
-                onClick={handleAddToCart}
+                onClick={handleBuyNow}
                 className="flex-1 py-4 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors text-center"
               >
                 Buy Now

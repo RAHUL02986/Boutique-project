@@ -15,7 +15,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
-    addToCart(product);
+    addToCart({ product, quantity: 1 });
   };
 
   return (

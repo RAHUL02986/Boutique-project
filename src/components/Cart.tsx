@@ -5,6 +5,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 
+function getItemKey(productId: string, size?: string, color?: string): string {
+  return `${productId}-${size || 'default'}-${color || 'default'}`;
+}
+
 export default function Cart() {
   const { items, removeFromCart, updateQuantity, totalPrice, isCartOpen, setIsCartOpen } = useCart();
 
@@ -48,50 +52,61 @@ export default function Cart() {
               </div>
             ) : (
               <div className="space-y-4">
-                {items.map((item) => (
-                  <div key={item.product._id} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
-                    <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
-                      <Image
-                        src={item.product.image}
-                        alt={item.product.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-secondary-800 truncate">{item.product.name}</h3>
-                      <p className="text-primary-600 font-medium">${item.product.price.toFixed(2)}</p>
-                      <div className="flex items-center mt-2 space-x-2">
-                        <button
-                          onClick={() => updateQuantity(item.product._id, item.quantity - 1)}
-                          className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded-lg hover:bg-gray-100"
-                        >
-                          -
-                        </button>
-                        <span className="w-8 text-center">{item.quantity}</span>
-                        <button
-                          onClick={() => updateQuantity(item.product._id, item.quantity + 1)}
-                          className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded-lg hover:bg-gray-100"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => removeFromCart(item.product._id)}
-                      className="p-2 text-secondary-400 hover:text-red-500"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                {items.map((item) => {
+                  const itemKey = getItemKey(item.product._id, item.selectedSize, item.selectedColor);
+                  return (
+                    <div key={itemKey} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+                      <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                        <Image
+                          src={item.product.image}
+                          alt={item.product.name}
+                          fill
+                          className="object-cover"
+                          sizes="80px"
                         />
-                      </svg>
-                    </button>
-                  </div>
-                ))}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-secondary-800 truncate">{item.product.name}</h3>
+                        {(item.selectedSize || item.selectedColor) && (
+                          <p className="text-sm text-secondary-500">
+                            {item.selectedColor && <span>{item.selectedColor}</span>}
+                            {item.selectedColor && item.selectedSize && <span> / </span>}
+                            {item.selectedSize && <span>Size: {item.selectedSize}</span>}
+                          </p>
+                        )}
+                        <p className="text-primary-600 font-medium">${item.product.price.toFixed(2)}</p>
+                        <div className="flex items-center mt-2 space-x-2">
+                          <button
+                            onClick={() => updateQuantity(itemKey, item.quantity - 1)}
+                            className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded-lg hover:bg-gray-100"
+                          >
+                            -
+                          </button>
+                          <span className="w-8 text-center">{item.quantity}</span>
+                          <button
+                            onClick={() => updateQuantity(itemKey, item.quantity + 1)}
+                            className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded-lg hover:bg-gray-100"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => removeFromCart(itemKey)}
+                        className="p-2 text-secondary-400 hover:text-red-500"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
