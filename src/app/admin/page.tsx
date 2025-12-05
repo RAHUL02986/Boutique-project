@@ -243,10 +243,10 @@ export default function AdminPage() {
 
                 {/* Products List */}
                 <div className="mt-8 bg-white p-6 rounded-lg shadow">
-                    <h2 className="text-xl font-semibold mb-4">Products</h2>
+                    <h2 className="text-2xl font-semibold mb-4">Products</h2>
 
                     {/* Filter Inputs */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                         <input
                             type="text"
                             placeholder="Search by Name"
