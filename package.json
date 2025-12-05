@@ -8,7 +8,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@types/node": "^24.10.1",
     "@types/nodemailer": "^7.0.4",
     "@types/react": "^19.2.7",
     "autoprefixer": "^10.4.22",
@@ -27,5 +26,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^24.10.1"
+  }
 }
