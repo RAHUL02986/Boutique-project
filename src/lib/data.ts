@@ -193,9 +193,9 @@ export const products = [
     name: 'Lace Trim Camisole',
     description: 'Delicate lace trim camisole. Perfect for layering or wearing alone. Features adjustable spaghetti straps, a V-neckline, and beautiful lace detailing at the neckline and hem.',
     price: 39.99,
-    image: 'https://images.unsplash.com/photo-1551163943-3f7c38e79f63?w=600&h=800&fit=crop',
+    image: 'https://images.unsplash.com/photo-1598554747436-c9293d6a588f?w=600&h=800&fit=crop',
     images: [
-      'https://images.unsplash.com/photo-1551163943-3f7c38e79f63?w=600&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1598554747436-c9293d6a588f?w=600&h=800&fit=crop',
       'https://images.unsplash.com/photo-1564257631407-4deb1f99d992?w=600&h=800&fit=crop',
       'https://images.unsplash.com/photo-1598554747436-c9293d6a588f?w=600&h=800&fit=crop',
       'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=600&h=800&fit=crop',
