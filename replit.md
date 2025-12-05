@@ -48,9 +48,17 @@ src/
 2. **Shop Page**: All products with category filtering and sorting
 3. **Category Pages**: Dynamic pages filtered by product category
 4. **Mega Menu**: Shop dropdown with category images and links
-5. **Shopping Cart**: Add/remove products, quantity management
+5. **Shopping Cart**: Add/remove products, variant display (size/color), quantity management
 6. **About Page**: Company story and values
 7. **Contact Page**: Form with nodemailer integration
+8. **Product Detail Page**: Image gallery with thumbnails, color/size selectors with validation, quantity picker
+9. **Checkout Page**: Multi-step form with shipping and payment details, order summary
+
+## Cart Features
+- Stores selected size and color variants per product
+- Validates required variant selections before adding to cart
+- Treats same product with different variants as separate cart items
+- Persists cart data in localStorage
 
 ## Environment Variables
 Required for full functionality:
