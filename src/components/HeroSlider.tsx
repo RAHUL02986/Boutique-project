@@ -12,7 +12,7 @@ import { heroSlides } from '@/lib/data';
 
 export default function HeroSlider() {
   return (
-    <section className="h-screen w-full">
+    <section className="md:h-screen h-[650px] w-full">
       <Swiper
         modules={[Autoplay, Pagination, EffectFade]}
         effect="fade"
