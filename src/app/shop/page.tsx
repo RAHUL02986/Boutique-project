@@ -1,17 +1,19 @@
 'use client';
 
 import React, { useState } from 'react';
-import ProductGrid from '@/components/ProductGrid';
+import Link from 'next/link';
+import { useCart } from '@/context/CartContext';
 import { products, categories } from '@/lib/data';
 import { Product } from '@/types';
 
 export default function ShopPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('featured');
+  const { addToCart, setIsCartOpen } = useCart();
 
-  const allProducts: Product[] = products.map((p, index) => ({
+  const allProducts: Product[] = products.map((p) => ({
     ...p,
-    _id: `product-${index}`,
+    _id: p.id,
   }));
 
   const filteredProducts = allProducts
@@ -28,6 +30,11 @@ export default function ShopPage() {
           return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
       }
     });
+
+  const handleAddToCart = (product: Product) => {
+    addToCart(product);
+    setIsCartOpen(true);
+  };
 
   return (
     <div className="pt-20">
@@ -85,24 +92,31 @@ export default function ShopPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredProducts.map((product) => (
             <div key={product._id} className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
-              <div className="relative aspect-[3/4] overflow-hidden">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                {product.featured && (
-                  <span className="absolute top-3 left-3 bg-primary-600 text-white text-xs px-2 py-1 rounded">
-                    Featured
-                  </span>
-                )}
-              </div>
+              <Link href={`/product/${product._id}`}>
+                <div className="relative aspect-[3/4] overflow-hidden">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  {product.featured && (
+                    <span className="absolute top-3 left-3 bg-primary-600 text-white text-xs px-2 py-1 rounded">
+                      Featured
+                    </span>
+                  )}
+                </div>
+              </Link>
               <div className="p-4">
-                <h3 className="font-medium text-secondary-800">{product.name}</h3>
+                <Link href={`/product/${product._id}`}>
+                  <h3 className="font-medium text-secondary-800 hover:text-primary-600 transition-colors">{product.name}</h3>
+                </Link>
                 <p className="text-sm text-secondary-500 mt-1 line-clamp-2">{product.description}</p>
                 <div className="flex items-center justify-between mt-4">
                   <span className="text-lg font-semibold text-primary-600">${product.price.toFixed(2)}</span>
-                  <button className="px-4 py-2 bg-secondary-800 text-white text-sm rounded-lg hover:bg-primary-600 transition-colors">
+                  <button 
+                    onClick={() => handleAddToCart(product)}
+                    className="px-4 py-2 bg-secondary-800 text-white text-sm rounded-lg hover:bg-primary-600 transition-colors"
+                  >
                     Add to Cart
                   </button>
                 </div>

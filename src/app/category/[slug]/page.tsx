@@ -15,9 +15,9 @@ export default function CategoryPage() {
 
   const categoryProducts: Product[] = products
     .filter((p) => p.category === slug)
-    .map((p, index) => ({
+    .map((p) => ({
       ...p,
-      _id: `${slug}-product-${index}`,
+      _id: p.id,
     }));
 
   if (!category) {

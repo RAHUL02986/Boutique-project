@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 
 export default function Cart() {
@@ -38,6 +39,12 @@ export default function Cart() {
                   />
                 </svg>
                 <p className="mt-4 text-secondary-500">Your cart is empty</p>
+                <button
+                  onClick={() => setIsCartOpen(false)}
+                  className="mt-4 text-primary-600 hover:text-primary-700 font-medium"
+                >
+                  Continue Shopping
+                </button>
               </div>
             ) : (
               <div className="space-y-4">
@@ -95,8 +102,18 @@ export default function Cart() {
                 <span className="text-secondary-600">Subtotal</span>
                 <span className="text-xl font-semibold text-secondary-800">${totalPrice.toFixed(2)}</span>
               </div>
-              <button className="w-full py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors">
+              <Link
+                href="/checkout"
+                onClick={() => setIsCartOpen(false)}
+                className="block w-full py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors text-center"
+              >
                 Checkout
+              </Link>
+              <button
+                onClick={() => setIsCartOpen(false)}
+                className="block w-full mt-2 py-3 text-secondary-600 font-medium hover:text-secondary-800 transition-colors text-center"
+              >
+                Continue Shopping
               </button>
             </div>
           )}

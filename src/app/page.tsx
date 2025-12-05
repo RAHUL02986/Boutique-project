@@ -6,9 +6,9 @@ import { Product } from '@/types';
 export default function Home() {
   const featuredProducts: Product[] = products
     .filter((p) => p.featured)
-    .map((p, index) => ({
+    .map((p) => ({
       ...p,
-      _id: `product-${index}`,
+      _id: p.id,
     }));
 
   return (
