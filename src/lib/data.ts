@@ -20,7 +20,7 @@ export const categories = [
   {
     name: 'Accessories',
     slug: 'accessories',
-    image: 'https://images.unsplash.com/photo-1611923134239-b9be5816e77f?w=400&h=400&fit=crop',
+    image: 'https://images.unsplash.com/photo-1630019852942-f89202989a59?w=600&h=800&fit=crop',
     description: 'Beautiful accessories to complete your look',
   },
 ];
@@ -121,9 +121,9 @@ export const products = [
     name: 'Denim Skirt',
     description: 'Classic denim skirt with a modern twist. Perfect for casual outings. Features a high waist, A-line silhouette, and distressed details. Pairs perfectly with any top.',
     price: 59.99,
-    image: 'https://images.unsplash.com/photo-1583496661160-fb5886a0uj1e?w=600&h=800&fit=crop',
+    image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&h=800&fit=crop',
     images: [
-      'https://images.unsplash.com/photo-1583496661160-fb5886a0uj1e?w=600&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&h=800&fit=crop',
       'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=600&h=800&fit=crop',
       'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&h=800&fit=crop',
       'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600&h=800&fit=crop',
@@ -142,7 +142,7 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&h=800&fit=crop',
     images: [
       'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1611923134239-b9be5816e77f?w=600&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1630019852942-f89202989a59?w=600&h=800&fit=crop',
       'https://images.unsplash.com/photo-1630019852942-f89202989a59?w=600&h=800&fit=crop',
       'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&h=800&fit=crop',
     ],
@@ -232,7 +232,7 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1630019852942-f89202989a59?w=600&h=800&fit=crop',
     images: [
       'https://images.unsplash.com/photo-1630019852942-f89202989a59?w=600&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1611923134239-b9be5816e77f?w=600&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1630019852942-f89202989a59?w=600&h=800&fit=crop',
       'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&h=800&fit=crop',
       'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&h=800&fit=crop',
     ],

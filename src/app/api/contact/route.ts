@@ -67,9 +67,9 @@ The Boutique Team
       console.log('Email sending failed (SMTP not configured):', emailError);
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Message received successfully!' 
+    return NextResponse.json({
+      success: true,
+      message: 'Message received successfully!'
     });
   } catch (error) {
     console.error('Error processing contact form:', error);
