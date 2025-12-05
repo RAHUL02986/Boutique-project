@@ -4,13 +4,30 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
 import Cart from './Cart';
 import { categories } from '@/lib/data';
 
 export default function Header() {
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const { totalItems, setIsCartOpen } = useCart();
+  const { user, login, logout } = useAuth();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const success = await login(email, password);
+    if (success) {
+      setIsLoginModalOpen(false);
+      setEmail('');
+      setPassword('');
+    } else {
+      alert('Invalid credentials');
+    }
+  };
 
   return (
     <>
@@ -89,6 +106,33 @@ export default function Header() {
             </nav>
 
             <div className="flex items-center space-x-4">
+              {user ? (
+                <div className="flex items-center space-x-4">
+                  <span className="text-secondary-700">Welcome, {user.email}</span>
+                  {user.role === 'super_admin' && (
+                    <Link
+                      href="/admin"
+                      className="text-secondary-700 hover:text-primary-600 transition-colors"
+                    >
+                      Admin Panel
+                    </Link>
+                  )}
+                  <button
+                    onClick={logout}
+                    className="text-secondary-700 hover:text-primary-600 transition-colors"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setIsLoginModalOpen(true)}
+                  className="text-secondary-700 hover:text-primary-600 transition-colors"
+                >
+                  Login
+                </button>
+              )}
+
               <button
                 onClick={() => setIsCartOpen(true)}
                 className="relative p-2 text-secondary-700 hover:text-primary-600 transition-colors"
@@ -167,6 +211,51 @@ export default function Header() {
               >
                 Contact
               </Link>
+            </div>
+          </div>
+        )}
+
+        {isLoginModalOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+              <h2 className="text-2xl font-bold mb-4">Login</h2>
+              <form onSubmit={handleLogin}>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">Email</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">Password</label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                    required
+                  />
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsLoginModalOpen(false)}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-md hover:bg-primary-700"
+                  >
+                    Login
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}
