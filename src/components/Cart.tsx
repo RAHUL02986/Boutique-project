@@ -11,6 +11,11 @@ function getItemKey(productId: string, size?: string, color?: string): string {
 
 export default function Cart() {
   const { items, removeFromCart, updateQuantity, totalPrice, isCartOpen, setIsCartOpen } = useCart();
+  const [imageErrors, setImageErrors] = React.useState<Set<string>>(new Set());
+
+  const handleImageError = (productId: string) => {
+    setImageErrors(prev => new Set(prev).add(productId));
+  };
 
   if (!isCartOpen) return null;
 
@@ -57,13 +62,20 @@ export default function Cart() {
                   return (
                     <div key={itemKey} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
                       <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
-                        <Image
-                          src={item.product.image}
-                          alt={item.product.name}
-                          fill
-                          className="object-cover"
-                          sizes="80px"
-                        />
+                        {imageErrors.has(item.product._id) ? (
+                          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                            <span className="text-gray-500 text-xs">No image</span>
+                          </div>
+                        ) : (
+                          <Image
+                            src={item.product.image}
+                            alt={item.product.name}
+                            fill
+                            className="object-cover"
+                            sizes="80px"
+                            onError={() => handleImageError(item.product._id)}
+                          />
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <h3 className="font-medium text-secondary-800 truncate">{item.product.name}</h3>

@@ -14,8 +14,13 @@ export default function Header() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
   const { totalItems, setIsCartOpen } = useCart();
   const { user, login, logout } = useAuth();
+
+  const handleImageError = (categorySlug: string) => {
+    setImageErrors(prev => new Set(prev).add(categorySlug));
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

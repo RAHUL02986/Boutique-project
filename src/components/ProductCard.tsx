@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
@@ -12,22 +12,34 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
+  const [imageError, setImageError] = useState(false);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     addToCart({ product, quantity: 1 });
   };
 
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
   return (
     <div className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
       <Link href={`/product/${product._id}`}>
         <div className="relative aspect-[3/4] overflow-hidden">
-          <Image
-            src={product.image}
-            alt={product.name}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-          />
+          {imageError ? (
+            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+              <span className="text-gray-500 text-sm">Image not available</span>
+            </div>
+          ) : (
+            <Image
+              src={product.image}
+              alt={product.name}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              onError={handleImageError}
+            />
+          )}
           {product.featured && (
             <span className="absolute top-3 left-3 bg-primary-600 text-white text-xs px-2 py-1 rounded">
               Featured

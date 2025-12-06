@@ -11,7 +11,8 @@ export default function CheckoutPage() {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
-  
+  const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -29,6 +30,10 @@ export default function CheckoutPage() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const handleImageError = (productId: string) => {
+    setImageErrors(prev => new Set(prev).add(productId));
+  };
 
   const shipping = totalPrice >= 100 ? 0 : 9.99;
   const tax = totalPrice * 0.08;

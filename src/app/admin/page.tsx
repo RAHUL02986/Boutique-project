@@ -22,7 +22,7 @@ export default function AdminPage() {
         price: '',
         description: '',
         category: '',
-        image: '',
+        image: null as File | null,
     });
     const [updateProductId, setUpdateProductId] = useState('');
     const [updatePrice, setUpdatePrice] = useState('');
@@ -56,15 +56,18 @@ export default function AdminPage() {
     const handleAddProduct = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            const formData = new FormData();
+            formData.append('name', newProduct.name);
+            formData.append('price', newProduct.price);
+            formData.append('description', newProduct.description);
+            formData.append('category', newProduct.category);
+            if (newProduct.image) {
+                formData.append('image', newProduct.image);
+            }
+
             const response = await fetch('/api/admin/products', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    ...newProduct,
-                    price: parseFloat(newProduct.price),
-                }),
+                body: formData,
             });
 
             if (response.ok) {
@@ -74,11 +77,12 @@ export default function AdminPage() {
                     price: '',
                     description: '',
                     category: '',
-                    image: '',
+                    image: null,
                 });
                 fetchProducts();
             } else {
-                alert('Error adding product');
+                const errorData = await response.json();
+                alert(`Error adding product: ${errorData.error || 'Unknown error'}`);
             }
         } catch (error) {
             console.error('Error adding product:', error);
@@ -184,11 +188,11 @@ export default function AdminPage() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">Image URL</label>
+                                <label className="block text-sm font-medium text-gray-700">Product Image</label>
                                 <input
-                                    type="url"
-                                    value={newProduct.image}
-                                    onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => setNewProduct({ ...newProduct, image: e.target.files?.[0] || null })}
                                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
                                     required
                                 />
