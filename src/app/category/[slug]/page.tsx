@@ -1,24 +1,41 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import ProductGrid from '@/components/ProductGrid';
-import { products, categories } from '@/lib/data';
+import { categories } from '@/lib/data';
 import { Product } from '@/types';
 
 export default function CategoryPage() {
   const params = useParams();
   const slug = params.slug as string;
+  const [categoryProducts, setCategoryProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const category = categories.find((c) => c.slug === slug);
 
-  const categoryProducts: Product[] = products
-    .filter((p) => p.category === slug)
-    .map((p) => ({
-      ...p,
-      _id: p.id,
-    }));
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(`/api/products?category=${slug}`);
+        if (response.ok) {
+          const products = await response.json();
+          setCategoryProducts(products);
+        } else {
+          console.error('Failed to fetch products');
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (slug) {
+      fetchProducts();
+    }
+  }, [slug]);
 
   if (!category) {
     return (
@@ -58,7 +75,11 @@ export default function CategoryPage() {
         </nav>
       </div>
 
-      {categoryProducts.length > 0 ? (
+      {loading ? (
+        <div className="py-16 text-center">
+          <p className="text-secondary-500">Loading products...</p>
+        </div>
+      ) : categoryProducts.length > 0 ? (
         <ProductGrid products={categoryProducts} />
       ) : (
         <div className="py-16 text-center">

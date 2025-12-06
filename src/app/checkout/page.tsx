@@ -3,11 +3,14 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
+import { Product } from '@/types';
 
 export default function CheckoutPage() {
   const { items, totalPrice, clearCart } = useCart();
   const [step, setStep] = useState<'shipping' | 'payment' | 'confirmation'>('shipping');
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [orderNumber, setOrderNumber] = useState('');
   
   const [formData, setFormData] = useState({
     firstName: '',
@@ -68,12 +71,71 @@ export default function CheckoutPage() {
     }
   };
 
-  const handlePaymentSubmit = (e: React.FormEvent) => {
+  const handlePaymentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validatePayment()) {
-      setOrderPlaced(true);
-      clearCart();
-      setStep('confirmation');
+      setIsSubmitting(true);
+      try {
+        const shipping = totalPrice >= 100 ? 0 : 9.99;
+        const tax = totalPrice * 0.08;
+        const orderTotal = totalPrice + shipping + tax;
+
+        const orderData = {
+          customerInfo: {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            phone: formData.phone,
+            address: formData.address,
+            city: formData.city,
+            state: formData.state,
+            zipCode: formData.zipCode,
+            country: formData.country,
+          },
+          items: items.map(item => ({
+            product: {
+              _id: item.product._id,
+              name: item.product.name,
+              price: item.product.price,
+              image: item.product.image,
+            },
+            quantity: item.quantity,
+          })),
+          paymentInfo: {
+            cardName: formData.cardName,
+            cardNumber: formData.cardNumber,
+            expiryDate: formData.expiryDate,
+            cvv: formData.cvv,
+          },
+          orderTotal,
+          shipping,
+          tax,
+        };
+
+        const response = await fetch('/api/orders', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(orderData),
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          setOrderNumber(result.orderNumber);
+          setOrderPlaced(true);
+          clearCart();
+          setStep('confirmation');
+        } else {
+          console.error('Failed to create order');
+          // In a real app, you'd show an error message to the user
+        }
+      } catch (error) {
+        console.error('Error submitting order:', error);
+        // In a real app, you'd show an error message to the user
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -336,9 +398,10 @@ export default function CheckoutPage() {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 py-4 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
+                    disabled={isSubmitting}
+                    className="flex-1 py-4 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Place Order
+                    {isSubmitting ? 'Processing...' : 'Place Order'}
                   </button>
                 </div>
               </form>

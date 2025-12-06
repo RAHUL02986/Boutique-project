@@ -1,20 +1,37 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
-import { products, categories } from '@/lib/data';
+import { categories } from '@/lib/data';
 import { Product } from '@/types';
 
 export default function ShopPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('featured');
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const { addToCart, setIsCartOpen } = useCart();
 
-  const allProducts: Product[] = products.map((p) => ({
-    ...p,
-    _id: p.id,
-  }));
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('/api/products');
+        if (response.ok) {
+          const products = await response.json();
+          setAllProducts(products);
+        } else {
+          console.error('Failed to fetch products');
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const filteredProducts = allProducts
     .filter((p) => selectedCategory === 'all' || p.category === selectedCategory)
@@ -87,43 +104,51 @@ export default function ShopPage() {
           </select>
         </div>
 
-        <p className="text-sm text-secondary-500 mb-6">{filteredProducts.length} products</p>
+        {loading ? (
+          <div className="py-16 text-center">
+            <p className="text-secondary-500">Loading products...</p>
+          </div>
+        ) : (
+          <>
+            <p className="text-sm text-secondary-500 mb-6">{filteredProducts.length} products</p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredProducts.map((product) => (
-            <div key={product._id} className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
-              <Link href={`/product/${product._id}`}>
-                <div className="relative aspect-[3/4] overflow-hidden">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  {product.featured && (
-                    <span className="absolute top-3 left-3 bg-primary-600 text-white text-xs px-2 py-1 rounded">
-                      Featured
-                    </span>
-                  )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {filteredProducts.map((product) => (
+                <div key={product._id} className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
+                  <Link href={`/product/${product._id}`}>
+                    <div className="relative aspect-[3/4] overflow-hidden">
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      {product.featured && (
+                        <span className="absolute top-3 left-3 bg-primary-600 text-white text-xs px-2 py-1 rounded">
+                          Featured
+                        </span>
+                      )}
+                    </div>
+                  </Link>
+                  <div className="p-4">
+                    <Link href={`/product/${product._id}`}>
+                      <h3 className="font-medium text-secondary-800 hover:text-primary-600 transition-colors">{product.name}</h3>
+                    </Link>
+                    <p className="text-sm text-secondary-500 mt-1 line-clamp-2">{product.description}</p>
+                    <div className="flex items-center justify-between mt-4">
+                      <span className="text-lg font-semibold text-primary-600">${product.price.toFixed(2)}</span>
+                      <button
+                        onClick={() => handleAddToCart(product)}
+                        className="px-4 py-2 bg-secondary-800 text-white text-sm rounded-lg hover:bg-primary-600 transition-colors"
+                      >
+                        Add to Cart
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </Link>
-              <div className="p-4">
-                <Link href={`/product/${product._id}`}>
-                  <h3 className="font-medium text-secondary-800 hover:text-primary-600 transition-colors">{product.name}</h3>
-                </Link>
-                <p className="text-sm text-secondary-500 mt-1 line-clamp-2">{product.description}</p>
-                <div className="flex items-center justify-between mt-4">
-                  <span className="text-lg font-semibold text-primary-600">${product.price.toFixed(2)}</span>
-                  <button 
-                    onClick={() => handleAddToCart(product)}
-                    className="px-4 py-2 bg-secondary-800 text-white text-sm rounded-lg hover:bg-primary-600 transition-colors"
-                  >
-                    Add to Cart
-                  </button>
-                </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
       </div>
     </div>
   );
